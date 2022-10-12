@@ -1,20 +1,24 @@
 import React from 'react'
-import {useDispatch} from 'react-redux'
-import { addProduct } from '../features/produit/produitSlice'
+import {useDispatch,useSelector} from 'react-redux'
+import {modalState,toggelModel} from '../features/Modal/modalSlice'
+import {SelectAllProducts} from '../features/produit/produitSlice'
+import { updateProduct } from '../features/produit/produitSlice'
 import {useFormik} from 'formik'
-import { useNavigate } from 'react-router-dom'
 import * as Yup from 'yup'
 
-function Addprodduct() {
+function UpdateProduct() {
   const dispatch=useDispatch()
-  const navigate=useNavigate()
+  const modal=useSelector(modalState)
+  const products=useSelector(SelectAllProducts)
+  
+  const product=products.filter(prod=>prod.id === modal.id)
 
     const formik=useFormik({
       initialValues:{
-        referance:'',
-        nomProduct:'',
-        prix:"",
-        Qnt:''
+        referance:product[0].referance ,
+        nomProduct:product[0].nomProduct,
+        prix:product[0].prix,
+        Qnt:product[0].Qnt
 
       },validationSchema:Yup.object({
         referance:Yup.string().required("champs obligatoir remplire le champ s'il vous plait"),
@@ -23,8 +27,8 @@ function Addprodduct() {
         Qnt:Yup.number().positive('le prix ne peut pas etre negative').min(1).required("champs obligatoir remplire le champ s'il vous plait"),
       }),
       onSubmit:value=>{
-        dispatch(addProduct(value))
-        navigate('/')
+        //  console.log({id:modal.id,...value})
+         dispatch(updateProduct({id:modal.id,...value}))
       }
     })  
 
@@ -88,11 +92,21 @@ function Addprodduct() {
                  }
         </div>
       </div>
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
-        Ajouter Produite
+      <div className='flex justify-between'>
+
+      <button 
+      
+      className="bg-blue-500 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none focus:shadow-outline" 
+        type="submit">
+        modifier Produite
       </button>
+      <button 
+      onClick={()=>dispatch(toggelModel())}
+      type="button" 
+      className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">fermme</button>
+      </div>
 
     </form>  )
 }
 
-export default Addprodduct
+export default UpdateProduct
