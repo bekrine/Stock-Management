@@ -5,12 +5,14 @@ export const modalSlice=createSlice({
     name:'modal',
     initialState:{
         isOpen:false,
-        id:null
+        id:null,
+        type:""
     },
     reducers:{
         toggelModel(state,action){
             state.isOpen=!state.isOpen
-            state.id=action.payload
+            state.id=action.payload.id
+            state.type=action.payload.type
         }
     }
 })
