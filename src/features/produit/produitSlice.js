@@ -1,4 +1,4 @@
-import {createSlice, nanoid,current} from '@reduxjs/toolkit'
+import {createSlice, nanoid} from '@reduxjs/toolkit'
 
 
 export const productSlice=createSlice({
@@ -41,12 +41,16 @@ export const productSlice=createSlice({
         },
         deleteProduct(state,action){
              state.prds=state.prds.filter(prod=>prod.id !== action.payload)
+        },
+        venteProduct(state,action){
+            const prd=state.prds.filter(p=>p.id === action.payload.id)
+            prd[0].Qnt=prd[0].Qnt - action.payload.Qnt
         }
     }
 })
 export const SelectAllProducts=(state)=>state.product.prds 
 
 
-export const {addProduct,updateProduct,deleteProduct}=productSlice.actions
+export const {addProduct,updateProduct,deleteProduct,venteProduct}=productSlice.actions
 
 export default productSlice.reducer

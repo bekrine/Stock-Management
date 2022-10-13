@@ -1,39 +1,39 @@
 import React from 'react'
 import {useDispatch, useSelector} from 'react-redux'
-import { SelectAllProducts } from '../features/produit/produitSlice'
+import { SelectAllProducts ,venteProduct } from '../features/produit/produitSlice'
+import { toggelModel,modalState } from '../features/Modal/modalSlice'
 import {useFormik} from 'formik'
-import { useNavigate } from 'react-router-dom'
 import * as Yup from 'yup'
 
 function Vente() {
-  const dispatch=useDispatch()
-  const navigate=useNavigate()
+   const dispatch=useDispatch()
   const products=useSelector(SelectAllProducts)
+  const modal=useSelector(modalState)
+  
+  const disabled=true
+   const prod=products.filter(prod=>prod.id === modal.id)
+  
 
-    const formik=useFormik({
-      initialValues:{
-        referance:'',
-        nomProduct:'',
-        prix:"",
-        Qnt:'',
-        date:''
-
-      },validationSchema:Yup.object({
-        referance:Yup.string().required("champs obligatoir remplire le champ s'il vous plait"),
-        nomProduct:Yup.string().required("champs obligatoir remplire le champ s'il vous plait"),
-        prix:Yup.number().positive('le prix ne peut pas etre negative').min(1).required("champs obligatoir remplire le champ s'il vous plait"),
-        Qnt:Yup.number().positive('le prix ne peut pas etre negative').min(1).required("champs obligatoir remplire le champ s'il vous plait"),
-        date:Yup.date().required('choiser la date')
-      }),
-      onSubmit:value=>{
-        // dispatch(addProduct(value))
-        // navigate('/')
-      }
-    })  
-
-    const {handleSubmit,touched,errors,getFieldProps}=formik
-
-
+  const formik=useFormik({
+    initialValues:{
+      referance: prod[0].referance,
+      nomProduct:prod[0].nomProduct ,
+      prix:prod[0].prix ,
+      Qnt: "" ,
+      
+    },validationSchema:Yup.object({
+      Qnt:Yup.number().positive('le prix ne peut pas etre negative').min(1).required("champs obligatoir remplire le champ s'il vous plait"),
+    }),
+    onSubmit:value=>{
+      dispatch(venteProduct({...value,id:modal.id}))
+      dispatch(toggelModel({id:null,type:""}))
+    }
+  })  
+  
+  const {handleSubmit,touched,errors,getFieldProps}=formik
+  
+     
+   
   return (
     <form onSubmit={handleSubmit} className=" mx-auto my-3.5 w-[80%] ">    
       <div className="flex flex-wrap -mx-3 mb-6">
@@ -42,33 +42,12 @@ function Vente() {
           Référence  
           </label>
         
-      <div className="relative">
-        <select className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-state">
-        {
-          products.map(prod=>{
-            return(
-              <option key={prod.id}>{prod.referance}</option>
-            )
-          })
-        }
-
-        </select>
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-          <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-        </div>
-      </div>
-    
-
-
-
-
           <input className={`appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 ${errors.referance && touched.referance ? "border-red-500" :""}`} 
-                 id="referance" type="text" placeholder="Référence"
-                {...getFieldProps('referance')}
-                 />
-           {
-                   touched.referance && errors.referance ?<p className="text-red-500 text-xs italic">{errors.referance}</p>:null
-                 }
+                 id="referance" 
+                 type="text" 
+                 disabled={disabled}
+                 placeholder="Référence"
+                {...getFieldProps('referance')}/>
         </div>
       </div>
       <div className="flex flex-wrap -mx-3 mb-6">
@@ -77,13 +56,12 @@ function Vente() {
           Nom Produit
           </label>
           <input className={`appearance-none block w-full bg-gray-200 text-gray-700 border  rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white ${errors.nomProduct && touched.nomProduct ? "border-red-500":""}`} 
-                 id="nomProduct" type="text" placeholder="Nom Product"
+                 id="nomProduct"
+                  type="text"
+                 disabled={disabled}
+                   placeholder="Nom Product"
                 {...getFieldProps('nomProduct')}  
                  />
-                 {
-                   touched.nomProduct && errors.nomProduct ?<p className="text-red-500 text-xs italic">{errors.nomProduct}</p>:null
-                 }
-          
         </div>
       </div>
         <div className="flex flex-wrap -mx-3 mb-6">
@@ -92,12 +70,12 @@ function Vente() {
          Prix Produit 
           </label>
           <input className={`appearance-none block w-full bg-gray-200 text-gray-700 border  rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white ${errors.prix && touched.prix ? "border-red-500" :""}`}
-                    id="prix" type="number" placeholder=" Prix Produit  "
+                 disabled={disabled}
+                   id="prix"
+                     type="number" 
+                     placeholder=" Prix Produit  "
                 {...getFieldProps('prix')}  
                     />
-           {
-                   touched.prix && errors.prix ?<p className="text-red-500 text-xs italic">{errors.prix}</p>:null
-                 }
         </div>
         <div className="w-full md:w-1/2 px-3">
           <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-last-name">
@@ -111,23 +89,19 @@ function Vente() {
                    touched.Qnt && errors.Qnt ?<p className="text-red-500 text-xs italic">{errors.Qnt}</p>:null
                  }
         </div>
-        <div className="w-full md:w-1/2 px-3">
-          <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-last-name">
-          Date
-          </label>
-          <input className={`appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 ${errors.Qnt && touched.Qnt ? "border-red-500" :""}`}
-                id="date" type="date" placeholder="Quantité de Produite"
-                {...getFieldProps('date')}  
-                />
-                 {
-                   touched.date && errors.date ?<p className="text-red-500 text-xs italic">{errors.date}</p>:null
-                 }
-        </div>
       </div>
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+      <div className='flex justify-between'>
+
+      <button 
+      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" 
+      type="submit">
         Vnete
       </button>
-
+      <button 
+      onClick={()=>dispatch(toggelModel({id:null,type:""}))}
+      type="button" 
+      className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">fermme</button>
+      </div>
     </form>  )
 }
 
