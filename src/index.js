@@ -9,7 +9,6 @@ import App from './App';
 import ErrorPage from './view/ErrorPage';
 import Addprodduct from './view/Addprodduct';
 import Table from './view/Table';
-import Vente from './view/Vente';
 
 
 const router=createBrowserRouter([
@@ -26,10 +25,6 @@ const router=createBrowserRouter([
       {
         path:'/Addproduct',
         element:<Addprodduct/>
-      },
-      {
-        path:'/vente',
-        element:<Vente/>
       }
       
     ]
