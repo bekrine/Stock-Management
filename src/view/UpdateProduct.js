@@ -8,6 +8,7 @@ import * as Yup from 'yup'
 
 function UpdateProduct() {
   const dispatch=useDispatch()
+
   const modal=useSelector(modalState)
   const products=useSelector(SelectAllProducts)
   
@@ -27,8 +28,9 @@ function UpdateProduct() {
         Qnt:Yup.number().positive('le prix ne peut pas etre negative').min(1).required("champs obligatoir remplire le champ s'il vous plait"),
       }),
       onSubmit:value=>{
-        //  console.log({id:modal.id,...value})
          dispatch(updateProduct({id:modal.id,...value}))
+         dispatch(toggelModel({id:null,type:""}))
+
       }
     })  
 
@@ -101,7 +103,7 @@ function UpdateProduct() {
         modifier Produite
       </button>
       <button 
-      onClick={()=>dispatch(toggelModel())}
+      onClick={()=>dispatch(toggelModel({id:null,type:""}))}
       type="button" 
       className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">fermme</button>
       </div>
