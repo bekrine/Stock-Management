@@ -10,7 +10,7 @@ export const productSlice=createSlice({
         referance:"398HH8",
         nomProduct:'join',
         prix:122,
-        Qnt:22,
+        Qnt:2,
 
     },
     {
@@ -49,6 +49,7 @@ export const productSlice=createSlice({
     }
 })
 export const SelectAllProducts=(state)=>state.product.prds 
+export const ProductsQntState=(state)=>state.product.prds.filter(prod=>prod.Qnt <=5)
 
 
 export const {addProduct,updateProduct,deleteProduct,venteProduct}=productSlice.actions

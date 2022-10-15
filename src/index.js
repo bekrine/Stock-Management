@@ -9,6 +9,10 @@ import App from './App';
 import ErrorPage from './view/ErrorPage';
 import Addprodduct from './view/Addprodduct';
 import Table from './view/Table';
+import Connection from './view/Connection';
+
+
+
 
 
 const router=createBrowserRouter([
@@ -25,6 +29,9 @@ const router=createBrowserRouter([
       {
         path:'/Addproduct',
         element:<Addprodduct/>
+      },{
+        path:"connection",
+        element:<Connection/>
       }
       
     ]
@@ -38,7 +45,11 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-    <RouterProvider router={router}></RouterProvider>
+    <RouterProvider router={router}>
+     {
+
+     }
+    </RouterProvider>
     </Provider>
   </React.StrictMode>
 );
