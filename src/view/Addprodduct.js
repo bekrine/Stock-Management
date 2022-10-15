@@ -9,9 +9,9 @@ function Addprodduct() {
   const dispatch=useDispatch()
   const navigate=useNavigate()
 
-    const formik=useFormik({
-      initialValues:{
-        referance:'',
+  const formik=useFormik({
+  initialValues:{
+    referance:'',
         nomProduct:'',
         prix:"",
         Qnt:''
