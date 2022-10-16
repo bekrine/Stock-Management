@@ -1,8 +1,13 @@
 import React, { useState } from 'react'
 import {Link} from 'react-router-dom'
+import {logOut,AuthState} from '../features/AuthUser/authUser'
+import { useSelector,useDispatch } from 'react-redux'
 
 function Navbar() {
+    const dispatch=useDispatch()
+    const currentUser=useSelector(AuthState)
     const [toggle, setToggel] = useState(false)
+
     return (
         <nav className="p-3 bg-gray-50 rounded border-gray-200 dark:bg-gray-800 dark:border-gray-700">
             <div className="container flex flex-wrap justify-between items-center mx-auto">
@@ -29,7 +34,20 @@ function Navbar() {
                         </li>
                        
                         
-                    </ul>
+                    {
+                        currentUser?.currentUser 
+                        ? 
+                        
+                        <li>
+                                <button 
+                                onClick={()=>dispatch(logOut())}
+                                className="block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-white dark:bg-blue-600 md:dark:bg-transparent" 
+                                aria-current="page">Deconnection</button>
+                            </li>
+                           
+                           :null
+                        }
+                        </ul>
                 </div>
             </div>
         </nav>
