@@ -3,15 +3,15 @@ import {useFormik} from 'formik'
 import {signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../model/firebase';
 import * as Yup from 'yup'
+import { useNavigate } from 'react-router-dom';
+import {login} from '../features/AuthUser/authUser'
+import { useDispatch } from 'react-redux';
 
 function Connection() {
 
-
-
-const [err,setError]=useState({
-  isError:false,
-  message:''
-})
+const dispatch=useDispatch()
+const navigate=useNavigate()
+const [err,setError]=useState(false)
 
   const formik=useFormik({
     initialValues:{
@@ -24,13 +24,14 @@ const [err,setError]=useState({
         onSubmit:async value=>{
           const {email,password}=value
           try {
-            const userCredential=signInWithEmailAndPassword(auth,email,password)
-            console.log(userCredential.user)
+            const userCredential= await signInWithEmailAndPassword(auth,email,password)
+            dispatch(login(userCredential.user))
+            navigate('/')
             
           } catch (error) {
-            console.log(error)
-            setError({isError:true,message:error.message})
+            setError(true)
           }
+        
         }
       })  
   
@@ -82,7 +83,7 @@ const [err,setError]=useState({
                     </div>
 
                     {
-                   err.isError ?<p className="text-red-500 text-xs italic">{err.message}</p>:null
+                   err ?<p className="text-red-500 text-xs italic">error</p>:null
                  }
                     <a
                        

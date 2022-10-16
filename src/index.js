@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import {createBrowserRouter,RouterProvider} from 'react-router-dom'
+import {createBrowserRouter,createRoutesFromElements,Route,RouterProvider} from 'react-router-dom'
 import {Provider} from 'react-redux'
+import RequireAuth from './utils/RequireAuth'
 
 import './index.css';
 import store from './model/store';
@@ -15,29 +16,18 @@ import Connection from './view/Connection';
 
 
 
-const router=createBrowserRouter([
-  {
-    path:'/',
-    element:<App />,
-    errorElement:<ErrorPage/>,
-    children:[
-      {
-        path:'/',
-        element:<Table/>
 
-      },
-      {
-        path:'/Addproduct',
-        element:<Addprodduct/>
-      },{
-        path:"connection",
-        element:<Connection/>
-      }
-      
-    ]
-    },
-
-])
+const router=createBrowserRouter(
+  createRoutesFromElements(
+    <Route path='/' element={<App/>} errorElement={<ErrorPage/>}>
+    <Route path='/' element={<RequireAuth/>}>
+      <Route index element={<Table/>}/>
+      <Route path='/Addproduct' element={<Addprodduct/>}/>
+    </Route>
+      <Route path='/connection' element={<Connection/>}/>
+    </Route>
+  )
+  )
 
 
 
@@ -46,9 +36,7 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
     <RouterProvider router={router}>
-     {
 
-     }
     </RouterProvider>
     </Provider>
   </React.StrictMode>

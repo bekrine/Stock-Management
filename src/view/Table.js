@@ -87,7 +87,7 @@ function Table() {
                                 Prix
                             </th>
                             <th scope="col" className="py-3 px-6 ">
-                                Contol
+                                Control
                             </th>
                         </tr>
                     </thead>
