@@ -7,7 +7,7 @@ export default configureStore({
     reducer:{
          product:productReducer,
          modal:modalReducer,
-         auth:AuthReducer
+         auth:AuthReducer,
 
     }
 })
