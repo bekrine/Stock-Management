@@ -9,5 +9,6 @@ export default configureStore({
          modal:modalReducer,
          auth:AuthReducer,
 
+
     }
 })
