@@ -1,6 +1,6 @@
 import React from 'react'
 import {useDispatch} from 'react-redux'
-import { addProduct } from '../features/produit/produitSlice'
+import { addNewProduct } from '../features/produit/produitSlice'
 import {useFormik} from 'formik'
 import { useNavigate } from 'react-router-dom'
 import * as Yup from 'yup'
@@ -23,7 +23,7 @@ function Addprodduct() {
         Qnt:Yup.number().positive('le prix ne peut pas etre negative').min(1).required("champs obligatoir remplire le champ s'il vous plait"),
       }),
       onSubmit:value=>{
-        dispatch(addProduct(value))
+        dispatch(addNewProduct(value))
         navigate('/')
       }
     })  

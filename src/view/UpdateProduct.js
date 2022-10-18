@@ -1,8 +1,7 @@
 import React from 'react'
 import {useDispatch,useSelector} from 'react-redux'
 import {modalState,toggelModel} from '../features/Modal/modalSlice'
-import {SelectAllProducts} from '../features/produit/produitSlice'
-import { updateProduct } from '../features/produit/produitSlice'
+import {SelectAllProducts, updateProductField} from '../features/produit/produitSlice'
 import {useFormik} from 'formik'
 import * as Yup from 'yup'
 
@@ -28,7 +27,8 @@ function UpdateProduct() {
         Qnt:Yup.number().positive('le prix ne peut pas etre negative').min(1).required("champs obligatoir remplire le champ s'il vous plait"),
       }),
       onSubmit:value=>{
-         dispatch(updateProduct({id:modal.id,...value}))
+        let prod={id:modal.id,...value}
+         dispatch(updateProductField(prod))
          dispatch(toggelModel({id:null,type:""}))
 
       }
