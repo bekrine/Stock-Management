@@ -1,27 +1,76 @@
-import {createSlice, nanoid} from '@reduxjs/toolkit'
+import {createSlice, nanoid,createAsyncThunk} from '@reduxjs/toolkit'
+import {addDoc, collection,deleteDoc,getDocs,doc, setDoc} from 'firebase/firestore'
+import { db } from '../../model/firebase'
 
+
+
+const initialState={
+    prds:[],
+    status:'idle',
+    error:null
+
+}
+
+export const fetchProducts=createAsyncThunk('/fetchproduct',async()=>{
+    try {
+        let list=[]
+        const respance= await getDocs(collection(db,'products'))
+        respance.forEach((doc) => {
+            list.push({id:doc.id,...doc.data()})
+        });
+        return list
+        
+    } catch (error) {
+        return error.message
+    }
+})
+
+export const addNewProduct=createAsyncThunk('/addProduct',async({referance,nomProduct,prix,Qnt})=>{
+        try {
+             await addDoc(collection(db,'products'),{
+                referance,
+                nomProduct,
+                prix,
+                Qnt
+            })
+        } catch (error) {
+            return error.message
+        }
+})
+
+export const dProduct=createAsyncThunk('/deleteproduct',async(id)=>{
+    try {
+        await deleteDoc(doc(db,'products',id))
+        
+    } catch (error) {
+        return error.message
+    }
+})
+
+
+export const updateProductField=createAsyncThunk('/updateProductField',async(prod)=>{
+
+
+    console.log(prod)
+    try {
+        const {referance,nomProduct,prix,Qnt,id}=prod
+        await setDoc(doc(db,'products',id),{
+                referance,
+                nomProduct,
+                prix,
+                Qnt
+        })
+
+    } catch (error) {
+        return error.message
+    }
+
+
+})
 
 export const productSlice=createSlice({
     name:'products',
-    initialState:
-            {
-                prds:[{
-        id:2,
-        referance:"398HH8",
-        nomProduct:'join',
-        prix:122,
-        Qnt:2,
-
-    },
-    {
-        id:3,
-        referance:"398sqH8",
-        nomProduct:'left',
-        prix:324,
-        Qnt:223,
-
-    }]
-    },
+    initialState,
     reducers:{
         addProduct:{
            reducer(state,action){
@@ -46,9 +95,37 @@ export const productSlice=createSlice({
             const prd=state.prds.filter(p=>p.id === action.payload.id)
             prd[0].Qnt=prd[0].Qnt - action.payload.Qnt
         }
+    },
+    extraReducers(builder){
+        builder
+        .addCase(fetchProducts.pending,(state,action)=>{
+            state.status='loading'
+        })
+        .addCase(fetchProducts.fulfilled,(state,action)=>{
+            state.status='succeeded'
+            state.prds=action.payload
+        })
+        .addCase(fetchProducts.rejected,(state,action)=>{
+            state.status='failed'
+            state.error=action.error.message
+        })
+        .addCase(addNewProduct.fulfilled,(state,action)=>{
+            state.status='idle'
+        
+        })
+        .addCase(dProduct.fulfilled,(state,action)=>{
+            state.status='idle'
+        })
+        .addCase(updateProductField.fulfilled,(state,action)=>{
+            state.status='idle'
+        })
     }
 })
 export const SelectAllProducts=(state)=>state.product.prds 
+export const SelectProductsStatus=(state)=>state.product.status 
+export const SelectProductsErrors=(state)=>state.product.error
+
+
 export const ProductsQntState=(state)=>state.product.prds.filter(prod=>prod.Qnt <=5)
 
 

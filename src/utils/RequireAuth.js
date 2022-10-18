@@ -5,7 +5,6 @@ import {AuthState} from '../features/AuthUser/authUser'
 
 const RequireAuth =({children})=>{
     const currentUser=useSelector(AuthState)
-    console.log(currentUser)
   return currentUser.currentUser ? <Outlet/> :<Navigate to='/connection'/>
 }
 
