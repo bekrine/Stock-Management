@@ -1,11 +1,13 @@
 import {createSlice, nanoid,createAsyncThunk} from '@reduxjs/toolkit'
 import {addDoc, collection,deleteDoc,getDocs,doc, setDoc} from 'firebase/firestore'
 import { db } from '../../model/firebase'
+import { checkQntProduct } from '../../utils/checkQntProduct'
 
 
 
 const initialState={
     prds:[],
+    productneedQnt:[],
     status:'idle',
     error:null
 
@@ -18,7 +20,8 @@ export const fetchProducts=createAsyncThunk('/fetchproduct',async()=>{
         respance.forEach((doc) => {
             list.push({id:doc.id,...doc.data()})
         });
-        return list
+       let productQntDawn=checkQntProduct(list)
+        return {list,productQntDawn}
         
     } catch (error) {
         return error.message
@@ -50,7 +53,6 @@ export const dProduct=createAsyncThunk('/deleteproduct',async(id)=>{
 
 export const updateProductField=createAsyncThunk('/updateProductField',async(prod)=>{
 
-
     console.log(prod)
     try {
         const {referance,nomProduct,prix,Qnt,id}=prod
@@ -67,6 +69,31 @@ export const updateProductField=createAsyncThunk('/updateProductField',async(pro
 
 
 })
+
+
+export const venteProducts=createAsyncThunk('/venteProduct',async(prodVente)=>{
+    
+    const {prod,products}=prodVente
+    const {referance,nomProduct,prix,Qnt,id}=prod
+    
+    const prd=products.filter(p=>p.id === id)
+    let newQnt=prd[0].Qnt - Qnt
+
+    try {
+        await setDoc(doc(db,'products',id),{
+                referance,
+                nomProduct,
+                prix,
+                Qnt:newQnt
+        })
+
+    } catch (error) {
+        return error.message
+    }
+
+    
+})
+
 
 export const productSlice=createSlice({
     name:'products',
@@ -91,7 +118,7 @@ export const productSlice=createSlice({
         deleteProduct(state,action){
              state.prds=state.prds.filter(prod=>prod.id !== action.payload)
         },
-        venteProduct(state,action){
+        vente(state,action){
             const prd=state.prds.filter(p=>p.id === action.payload.id)
             prd[0].Qnt=prd[0].Qnt - action.payload.Qnt
         }
@@ -102,8 +129,10 @@ export const productSlice=createSlice({
             state.status='loading'
         })
         .addCase(fetchProducts.fulfilled,(state,action)=>{
+
             state.status='succeeded'
-            state.prds=action.payload
+            state.productneedQnt=action.payload.productQntDawn
+            state.prds=action.payload.list
         })
         .addCase(fetchProducts.rejected,(state,action)=>{
             state.status='failed'
@@ -119,14 +148,17 @@ export const productSlice=createSlice({
         .addCase(updateProductField.fulfilled,(state,action)=>{
             state.status='idle'
         })
+        .addCase(venteProducts.fulfilled,(state)=>{
+            state.status='idle'
+        })
     }
 })
 export const SelectAllProducts=(state)=>state.product.prds 
+export const SelectProductsNeedQnt=(state)=>state.product.productneedQnt 
 export const SelectProductsStatus=(state)=>state.product.status 
 export const SelectProductsErrors=(state)=>state.product.error
 
 
-export const ProductsQntState=(state)=>state.product.prds.filter(prod=>prod.Qnt <=5)
 
 
 export const {addProduct,updateProduct,deleteProduct,venteProduct}=productSlice.actions

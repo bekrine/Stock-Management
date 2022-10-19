@@ -1,6 +1,6 @@
 import React from 'react'
 import {useDispatch, useSelector} from 'react-redux'
-import { SelectAllProducts ,venteProduct } from '../features/produit/produitSlice'
+import { SelectAllProducts ,venteProducts } from '../features/produit/produitSlice'
 import { toggelModel,modalState } from '../features/Modal/modalSlice'
 import {useFormik} from 'formik'
 import * as Yup from 'yup'
@@ -25,7 +25,12 @@ function Vente() {
       Qnt:Yup.number().positive('le prix ne peut pas etre negative').min(1).required("champs obligatoir remplire le champ s'il vous plait"),
     }),
     onSubmit:value=>{
-      dispatch(venteProduct({...value,id:modal.id}))
+      let prodVente={
+        prod:{...value,id:modal.id},
+        products:products
+
+      }
+      dispatch(venteProducts(prodVente))
       dispatch(toggelModel({id:null,type:""}))
     }
   })  
