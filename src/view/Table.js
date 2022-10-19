@@ -1,7 +1,7 @@
 import React,{useEffect, useState} from 'react'
 import { useSelector,useDispatch } from 'react-redux'
-import { SelectAllProducts,SelectProductsStatus,SelectProductsErrors,fetchProducts } from '../features/produit/produitSlice'
-import{modalState} from '../features/Modal/modalSlice'
+import { SelectAllProducts,SelectProductsStatus,SelectProductsErrors,fetchProducts, SelectProductsNeedQnt } from '../features/produit/produitSlice'
+import{modalState, toggelModel} from '../features/Modal/modalSlice'
 
 import ProductExcpert from './ProductExcpert'
 import Recherch from './Recherch'
@@ -9,31 +9,35 @@ import Modal from './Modal'
 import UpdateProduct from './UpdateProduct'
 import Vente from './Vente'
 import Notification from './Notification'
+import Loader from './Loader'
 
 function Table() {
     const dispatch=useDispatch()
     const products = useSelector(SelectAllProducts)
+    const productsNeedQnt = useSelector(SelectProductsNeedQnt)
     const Status = useSelector(SelectProductsStatus)
     const error = useSelector(SelectProductsErrors)
     const modalType = useSelector(modalState)
+    
+
+
 
     useEffect(()=>{
-        if(Status === 'idle'){
-            dispatch(fetchProducts())
+        if(productsNeedQnt.length > 0){
+            dispatch(toggelModel({id:null,type:'notification'}))   
         }
-    },[Status,dispatch])
-
-
-
+    },[productsNeedQnt.length])
+    
     const [searchTerm,setSeachTerm]=useState('')
     
     
     
     
     
+
     let content
     if(Status === 'loading'){
-        return <div>...loading</div>
+        return <Loader/>
     }else if(Status === 'succeeded'){
         const reverseProdact = [...products].reverse()
        content=reverseProdact.filter(prod=>{
@@ -45,13 +49,12 @@ function Table() {
         }).map((product) => {
             return <ProductExcpert product={product} key={product.id} />  
         })
-
-        
+         
     }else if(Status === 'failed'){
         return <div>{error}</div>
     }
-
-
+    
+    
 
 
     return (
@@ -88,7 +91,11 @@ function Table() {
             </div>
             <Modal>
                 {
-                    modalType?.type ==='update'? <UpdateProduct/>: modalType?.type ==='vente' ? <Vente/> : <Notification/>
+                    modalType?.type ==='update'? <UpdateProduct/>
+                        : modalType?.type ==='vente' ? <Vente/>
+                             : modalType?.type ==='notification' ?
+                              <Notification productsNeedQnt={productsNeedQnt}/> 
+                             : null
                   
                 }
                 
