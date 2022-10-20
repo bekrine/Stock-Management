@@ -3,15 +3,15 @@ import {useFormik} from 'formik'
 import {signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../model/firebase';
 import * as Yup from 'yup'
-import { useNavigate } from 'react-router-dom';
-import {login} from '../features/AuthUser/authUser'
-import { useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+
 
 function Connection() {
 
-const dispatch=useDispatch()
 const navigate=useNavigate()
-const [err,setError]=useState(false)
+
+
+const [err,setError]=useState({isError:false,errMes:''})
 
   const formik=useFormik({
     initialValues:{
@@ -24,12 +24,12 @@ const [err,setError]=useState(false)
         onSubmit:async value=>{
           const {email,password}=value
           try {
-            const userCredential= await signInWithEmailAndPassword(auth,email,password)
-            dispatch(login(userCredential.user))
+             await signInWithEmailAndPassword(auth,email,password)
+            
             navigate('/')
             
           } catch (error) {
-            setError(true)
+            setError({isError:true,errMes:error.message})
           }
         
         }
@@ -83,14 +83,14 @@ const [err,setError]=useState(false)
                     </div>
 
                     {
-                   err ?<p className="text-red-500 text-xs italic">error</p>:null
+                   err.isError ?<p className="text-red-500 text-xs italic">{err.errMes}</p>:null
                  }
-                    <a
+                    <Link 
                        
                         className="text-xs text-blue-600 hover:underline"
                     >
                         Forget Password?
-                    </a>
+                    </Link >
                     <div className="mt-6">
                         <button  
                         type='submit'

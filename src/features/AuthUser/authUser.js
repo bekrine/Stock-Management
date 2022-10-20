@@ -1,4 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { signOut } from "firebase/auth";
+import { auth } from "../../model/firebase";
 
 
 
@@ -6,23 +8,27 @@ import { createSlice } from "@reduxjs/toolkit";
 export const AthSlice=createSlice({
     name:'authSlice',
     initialState:{
-        currentUser:JSON.parse(localStorage.getItem('user')) || null
+        currentUser:null
     },
     reducers:{
         login(state,action){
             state.currentUser=action.payload
-            localStorage.setItem('user',JSON.stringify(state.currentUser))
         },
-        logOut(state){
-            state.currentUser=null
-            localStorage.removeItem('user',JSON.stringify(state.currentUser))
+        logOut:async (state)=>{
+            try {
+                 await signOut(auth)
+                
+            } catch (error) {
+                return error.message
+            }
+        
 
         }
     }
 
 })
 
-export const AuthState=(state)=>state.auth
+export const AuthState=(state)=>state.auth.currentUser
 
 export const {logOut,login}=AthSlice.actions
 

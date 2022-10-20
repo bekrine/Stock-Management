@@ -1,6 +1,6 @@
 import React,{useEffect, useState} from 'react'
 import { useSelector,useDispatch } from 'react-redux'
-import { SelectAllProducts,SelectProductsStatus,SelectProductsErrors,fetchProducts, SelectProductsNeedQnt } from '../features/produit/produitSlice'
+import { SelectAllProducts,SelectProductsStatus,SelectProductsErrors, SelectProductsNeedQnt } from '../features/produit/produitSlice'
 import{modalState, toggelModel} from '../features/Modal/modalSlice'
 
 import ProductExcpert from './ProductExcpert'
@@ -26,7 +26,7 @@ function Table() {
         if(productsNeedQnt.length > 0){
             dispatch(toggelModel({id:null,type:'notification'}))   
         }
-    },[productsNeedQnt.length])
+    },[productsNeedQnt.length,dispatch])
     
     const [searchTerm,setSeachTerm]=useState('')
     

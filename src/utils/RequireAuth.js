@@ -1,11 +1,14 @@
 import React from 'react'
+import Loader from '../view/Loader'
 import { useSelector } from 'react-redux'
 import { Navigate, Outlet } from 'react-router-dom'
 import {AuthState} from '../features/AuthUser/authUser'
 
-const RequireAuth =({children})=>{
+const RequireAuth =()=>{
     const currentUser=useSelector(AuthState)
-  return currentUser.currentUser ? <Outlet/> :<Navigate to='/connection'/>
+    if(currentUser === null){
+      return <Loader/>
+    }return currentUser ? <Outlet/> : <Navigate to='/connection'/> 
 }
 
 export default RequireAuth

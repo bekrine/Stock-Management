@@ -53,7 +53,6 @@ export const dProduct=createAsyncThunk('/deleteproduct',async(id)=>{
 
 export const updateProductField=createAsyncThunk('/updateProductField',async(prod)=>{
 
-    console.log(prod)
     try {
         const {referance,nomProduct,prix,Qnt,id}=prod
         await setDoc(doc(db,'products',id),{

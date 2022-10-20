@@ -1,9 +1,13 @@
-import React, { useEffect }  from "react";
-
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AuthState } from "./features/AuthUser/authUser";
+
+
+import { Outlet} from 'react-router-dom'
+import Navbar from "./view/Navbar";
+import {  AuthState, login } from "./features/AuthUser/authUser";
 import { fetchProducts, SelectProductsStatus } from "./features/produit/produitSlice";
-import Layout from "./view/Layout";
+import { auth } from "./model/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 
 
@@ -12,19 +16,31 @@ import Layout from "./view/Layout";
 
 function App() {
 
-  const isAuth=useSelector(AuthState)
   const Status = useSelector(SelectProductsStatus)
-  const dispatch=useDispatch()
+  const isAuth = useSelector(AuthState)
+  const dispatch = useDispatch()
+
 
   useEffect(()=>{
-    if(isAuth && Status === "idle" ){
-      dispatch(fetchProducts())
-    }
-  },[Status])
+    const unsbscribe=onAuthStateChanged(auth,(user)=>{
+        if (user) {
+        
+           dispatch(login(user.uid))
+        }
+      })
+     return unsbscribe
+    },[dispatch])
+
+  useEffect(() => {
+     if (auth.currentUser && Status === "idle") {
+       dispatch(fetchProducts())
+     }
+  }, [Status,isAuth,dispatch])
 
   return (
     <>
-    <Layout/>
+      <Navbar />
+      <Outlet />
     </>
   );
 }
