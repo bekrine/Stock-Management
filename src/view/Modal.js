@@ -8,7 +8,7 @@ function Modal({children}) {
   return (
       <>
       <div className='fixed inset-0 bg-slate-400 opacity-90 z-[1000]' />
-    <div className='fixed top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%] bg-white z-[1000]'>
+    <div className=' fixed top-[50%] w-full  left-[50%] translate-y-[-50%] translate-x-[-50%] bg-white z-[1000] sm:w-fit   '>
         {children}
     </div>
       </>

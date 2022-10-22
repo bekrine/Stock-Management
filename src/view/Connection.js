@@ -86,7 +86,7 @@ const [err,setError]=useState({isError:false,errMes:''})
                    err.isError ?<p className="text-red-500 text-xs italic">{err.errMes}</p>:null
                  }
                     <Link 
-                       
+                       to={'/forgetpassword'}
                         className="text-xs text-blue-600 hover:underline"
                     >
                         Forget Password?

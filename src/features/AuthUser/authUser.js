@@ -1,8 +1,17 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { signOut } from "firebase/auth";
+import { createSlice , createAsyncThunk } from "@reduxjs/toolkit";
+import { sendPasswordResetEmail, signOut } from "firebase/auth";
 import { auth } from "../../model/firebase";
 
 
+export const forgetPassword=createAsyncThunk('/forgetPassword',async(email)=>{
+
+        try {
+            await sendPasswordResetEmail(auth,email)
+
+        } catch (error) {
+            return error.message
+        }
+})
 
 
 export const AthSlice=createSlice({
@@ -24,6 +33,14 @@ export const AthSlice=createSlice({
         
 
         }
+    },
+    extraReducers(builder){
+        builder
+        .addCase(forgetPassword.fulfilled,(state,action)=>{
+            console.log(action)
+        })
+        
+
     }
 
 })
