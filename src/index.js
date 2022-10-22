@@ -11,6 +11,7 @@ import ErrorPage from './view/ErrorPage';
 import Addprodduct from './view/Addprodduct';
 import Table from './view/Table';
 import Connection from './view/Connection';
+import ForgetPassword from './view/ForgetPassword';
 
 
 
@@ -25,6 +26,7 @@ const router=createBrowserRouter(
       <Route path='/Addproduct' element={<Addprodduct/>}/>
     </Route>
       <Route path='/connection' element={<Connection/>}/>
+      <Route path='/forgetpassword' element={<ForgetPassword/>}/>
     </Route>
   )
   )

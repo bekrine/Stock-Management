@@ -25,8 +25,9 @@ function App() {
     const unsbscribe=onAuthStateChanged(auth,(user)=>{
         if (user) {
         
-           dispatch(login(user.uid))
-        }
+          return dispatch(login(user.uid))
+        
+      }return dispatch(login(undefined))
       })
      return unsbscribe
     },[dispatch])

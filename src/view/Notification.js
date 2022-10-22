@@ -5,13 +5,13 @@ import {moveRight,moveLeft} from '../utils/sliderModale'
 
 function Notification({ productsNeedQnt }) {
   const dispatch = useDispatch(toggelModel)
-  const [changePosition,setChangePosition]=useState(1)
-
+  const [changePosition,setChangePosition]=useState(0)
 
   return (
     <div className=" mx-auto my-3.5 truncate w-[90%] ">
       <div className='flex justify-center'>
-        <h1 className='uppercase text-red-700 text-lg font-bold'>{productsNeedQnt.length} Produit </h1>
+        <h1 className='uppercase text-red-700 text-lg font-bold'>
+            {productsNeedQnt.length} {productsNeedQnt.length > 1 ? "Produits" : "Produit"}  </h1>
       </div>
 
         <div
@@ -30,15 +30,14 @@ function Notification({ productsNeedQnt }) {
             <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
           </svg>
         </div>
-
-      <div  className={`flex 
-                         relative left-[-${changePosition * 100}%] max-w-[200px]  mx-3`}  >
+    
+      <div  className='flex relative  max-w-[200px]  mx-3' style={{left:`-${changePosition * 100}%`}}  >
 
 
         {
           productsNeedQnt.map(prod => {
             return (
-              <div key={prod.id} className='w-full m-4 transition ease-in-out delay-150'  >
+              <div key={prod.id} className='w-full  m-4'  >
                 <div className='flex m-2'>
 
                   <label className=" uppercase  text-gray-700 text-xs font-bold " >
