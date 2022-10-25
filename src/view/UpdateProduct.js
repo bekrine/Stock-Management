@@ -1,7 +1,7 @@
 import React from 'react'
 import {useDispatch,useSelector} from 'react-redux'
 import {modalState,toggelModel} from '../features/Modal/modalSlice'
-import {SelectAllProducts, updateProductField} from '../features/produit/produitSlice'
+import {SelectAllProducts, SelectProductsStatus, updateProductField} from '../features/produit/produitSlice'
 import {useFormik} from 'formik'
 import * as Yup from 'yup'
 
@@ -10,6 +10,7 @@ function UpdateProduct() {
 
   const modal=useSelector(modalState)
   const products=useSelector(SelectAllProducts)
+  const Status=useSelector(SelectProductsStatus)
   
   const product=products.filter(prod=>prod.id === modal.id)
 
@@ -29,8 +30,6 @@ function UpdateProduct() {
       onSubmit:value=>{
         let prod={id:modal.id,...value}
          dispatch(updateProductField(prod))
-         dispatch(toggelModel({id:null,type:""}))
-
       }
     })  
 
@@ -99,8 +98,13 @@ function UpdateProduct() {
       <button 
       
       className="bg-blue-500 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none focus:shadow-outline" 
-        type="submit">
-        modifier Produite
+        type="submit">{
+          Status === 'updateOnProgres' ?
+          <div className=" z-[1000] spinner-border animate-spin w-8 h-8 border-4 rounded-full" role="status">
+                <span className="visually-hidden"></span>
+              </div>
+              :'modifier Produite'
+        }
       </button>
       <button 
       onClick={()=>dispatch(toggelModel({id:null,type:""}))}

@@ -1,6 +1,6 @@
 import React from 'react'
 import {useDispatch, useSelector} from 'react-redux'
-import { SelectAllProducts ,venteProducts } from '../features/produit/produitSlice'
+import { SelectAllProducts ,SelectProductsErrors,venteProducts } from '../features/produit/produitSlice'
 import { toggelModel,modalState } from '../features/Modal/modalSlice'
 import {useFormik} from 'formik'
 import * as Yup from 'yup'
@@ -9,6 +9,7 @@ function Vente() {
    const dispatch=useDispatch()
   const products=useSelector(SelectAllProducts)
   const modal=useSelector(modalState)
+  const errorState=useSelector(SelectProductsErrors)
   
   const disabled=true
    const prod=products.filter(prod=>prod.id === modal.id)
@@ -25,21 +26,21 @@ function Vente() {
       Qnt:Yup.number().positive('le prix ne peut pas etre negative').min(1).required("champs obligatoir remplire le champ s'il vous plait"),
     }),
     onSubmit:value=>{
+      const {Qnt}=value
       let prodVente={
-        prod:{...value,id:modal.id},
-        products:products
-
+        QntProd:prod[0].Qnt,
+        QntVente:Qnt,
+        id:modal.id
       }
-      dispatch(venteProducts(prodVente))
-      dispatch(toggelModel({id:null,type:""}))
+   
+     dispatch(venteProducts(prodVente))
     }
   })  
-  
   const {handleSubmit,touched,errors,getFieldProps}=formik
   
-     
-   
   return (
+    <>
+    {errorState && <div className="flex justify-center m-4 text-red-500 text-md italic">{errorState}</div>}
     <form onSubmit={handleSubmit} className=" mx-auto my-3.5 w-[80%] ">    
       <div className="flex flex-wrap -mx-3 mb-6">
         <div className="w-full px-3">
@@ -107,7 +108,9 @@ function Vente() {
       type="button" 
       className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">fermme</button>
       </div>
-    </form>  )
+    </form> 
+    </>
+     )
 }
 
 export default Vente

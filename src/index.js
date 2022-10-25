@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client';
 import {createBrowserRouter,createRoutesFromElements,Route,RouterProvider} from 'react-router-dom'
 import {Provider} from 'react-redux'
 import RequireAuth from './utils/RequireAuth'
+import "react-toastify/dist/ReactToastify.css";
+
 
 import './index.css';
 import store from './model/store';

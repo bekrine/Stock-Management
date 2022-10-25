@@ -1,13 +1,13 @@
 import React from 'react'
-import {useDispatch} from 'react-redux'
-import { addNewProduct } from '../features/produit/produitSlice'
+import {useDispatch, useSelector} from 'react-redux'
+import { addNewProduct, SelectProductsStatus } from '../features/produit/produitSlice'
 import {useFormik} from 'formik'
-import { useNavigate } from 'react-router-dom'
 import * as Yup from 'yup'
+import { ToastContainer } from 'react-toastify'
 
 function Addprodduct() {
   const dispatch=useDispatch()
-  const navigate=useNavigate()
+  const Status=useSelector(SelectProductsStatus)
 
   const formik=useFormik({
   initialValues:{
@@ -24,11 +24,12 @@ function Addprodduct() {
       }),
       onSubmit:value=>{
         dispatch(addNewProduct(value))
-        navigate('/')
+       if( Status === 'succeeded') resetForm('')
+        
       }
     })  
 
-    const {handleSubmit,touched,errors,getFieldProps}=formik
+    const {handleSubmit,touched,errors,getFieldProps,resetForm}=formik
 
 
   return (
@@ -89,9 +90,14 @@ function Addprodduct() {
         </div>
       </div>
       <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
-        Ajouter Produite
+        {  Status === 'addOnProgrese' ? 
+              <div className=" z-[1000] spinner-border animate-spin w-8 h-8 border-4 rounded-full" role="status">
+                <span className="visually-hidden"></span>
+              </div>
+             : 'Ajouter Produite'
+            }
       </button>
-
+     <ToastContainer/>            
     </form>  )
 }
 
