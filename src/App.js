@@ -26,8 +26,7 @@ function App() {
         if (user) {
         
           return dispatch(login(user.uid))
-        
-      }return dispatch(login(undefined))
+        }
       })
      return unsbscribe
     },[dispatch])

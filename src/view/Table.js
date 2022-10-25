@@ -1,6 +1,10 @@
-import React,{useEffect, useState} from 'react'
+import React,{useEffect} from 'react'
 import { useSelector,useDispatch } from 'react-redux'
-import { SelectAllProducts,SelectProductsStatus,SelectProductsErrors, SelectProductsNeedQnt } from '../features/produit/produitSlice'
+import { SelectAllProducts,
+    SelectProductsStatus,
+    SelectProductsErrors, 
+    SelectProductsNeedQnt, 
+    SelectProductsRechercher } from '../features/produit/produitSlice'
 import{modalState, toggelModel} from '../features/Modal/modalSlice'
 
 import ProductExcpert from './ProductExcpert'
@@ -10,6 +14,7 @@ import UpdateProduct from './UpdateProduct'
 import Vente from './Vente'
 import Notification from './Notification'
 import Loader from './Loader'
+import { ToastContainer } from 'react-toastify'
 
 function Table() {
     const dispatch=useDispatch()
@@ -18,35 +23,28 @@ function Table() {
     const Status = useSelector(SelectProductsStatus)
     const error = useSelector(SelectProductsErrors)
     const modalType = useSelector(modalState)
+    const productRechrcher = useSelector(SelectProductsRechercher)
     
 
 
-
+    console.log(productRechrcher)
     useEffect(()=>{
         if(productsNeedQnt.length > 0){
             dispatch(toggelModel({id:null,type:'notification'}))   
         }
     },[productsNeedQnt.length,dispatch])
     
-    const [searchTerm,setSeachTerm]=useState('')
-    
-    
-    
-    
-    
-
     let content
     if(Status === 'loading'){
         return <Loader/>
     }else if(Status === 'succeeded'){
-        const reverseProdact = [...products].reverse()
-       content=reverseProdact.filter(prod=>{
-            if(searchTerm === ""){
-                return prod
-            }else if(prod.referance.toLowerCase().includes(searchTerm.toLowerCase())){
-                return prod
-            }
-        }).map((product) => {
+        if(productRechrcher?.length === 0){
+                content=<tr><td>Aucun produit Trouve</td></tr>
+        }else
+        if(productRechrcher?.length > 0){
+            content=productRechrcher.map((product) => {
+                return <ProductExcpert product={product} key={product.id} /> } )            
+        }else content=products.map((product) => {
             return <ProductExcpert product={product} key={product.id} />  
         })
          
@@ -54,12 +52,11 @@ function Table() {
         return <div>{error}</div>
     }
     
-    
 
 
     return (
         <>
-            <Recherch setSeachTerm={setSeachTerm} />
+            <Recherch  />
             <div className="overflow-x-auto relative">
                 <table className="mx-auto my-2 w-[80%] text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
@@ -100,6 +97,8 @@ function Table() {
                 }
                 
             </Modal>
+            <ToastContainer autoClose={2000}/>
+        
         </>
     )
 }
