@@ -1,4 +1,4 @@
-import {createSlice, nanoid,createAsyncThunk} from '@reduxjs/toolkit'
+import {createSlice,createAsyncThunk} from '@reduxjs/toolkit'
 import {addDoc, 
     collection,
     deleteDoc,
@@ -28,38 +28,46 @@ const initialState={
 
 }
 
-// export const fetchProducts=createAsyncThunk('/fetchproduct',async()=>{
+  export const fetchProducts=createAsyncThunk('/fetchproduct',async()=>{
 //     try {
         
     
+//     const q=query(collection(db,'products'))
 
-//          onSnapshot(collection(db,'products'),(snapshot)=>{
+//    let result=[]
+//    onSnapshot(q,(snapshot)=>{
 //       const list=snapshot.docs.map(document=>{ 
 //          return  {id:document.id,...document.data()}
 //         })
 //           let productQntDawn=checkQntProduct(list)
+//           console.log(list)
+//           console.log(productQntDawn)
 //           return {list,productQntDawn}
 //       })
+//       console.log(result)
+      
+//     } catch (error) {
+//         return error.message
+//     }
+ })
+
+
+// export const fetchProducts=createAsyncThunk('/fetchproduct',async()=>{
+
+//     const q=query(collection(db,'products'),limit(5))
+//     try {
+//         let list=[]
+//         const respance= await getDocs(q)
+//         respance.forEach((doc) => {
+//             list.push({id:doc.id,...doc.data()})
+//         });
+//        let productQntDawn=checkQntProduct(list)
+//         return {list,productQntDawn}
+        
 //     } catch (error) {
 //         return error.message
 //     }
 // })
-export const fetchProducts=createAsyncThunk('/fetchproduct',async()=>{
-
-    const q=query(collection(db,'products'),limit(5))
-    try {
-        let list=[]
-        const respance= await getDocs(q)
-        respance.forEach((doc) => {
-            list.push({id:doc.id,...doc.data()})
-        });
-       let productQntDawn=checkQntProduct(list)
-        return {list,productQntDawn}
-        
-    } catch (error) {
-        return error.message
-    }
-})
 
 export const addNewProduct=createAsyncThunk('/addProduct',async({referance,nomProduct,prix,Qnt})=>{
         try {
@@ -152,8 +160,14 @@ export const productSlice=createSlice({
     name:'products',
     initialState,
     reducers:{
+        initialize:(state,action)=>{
+            state.productneedQnt=action.payload?.productQntDawn
+            state.prds=action.payload?.list
+            state.status='succeeded'
+        },
         resetRecherche:(state)=>{
             state.productRechrcher=null
+            state.status='succeeded'
         }
     }
     ,
@@ -197,6 +211,9 @@ export const productSlice=createSlice({
             state.error=action.payload
             state.status='succeeded'
         })     
+        .addCase(RecherchProduct.pending,(state,action)=>{{
+            state.status='rechercheOnProgres'
+        }})
         .addCase(RecherchProduct.fulfilled,(state,action)=>{{
             state.productRechrcher=action.payload
         }})
@@ -212,6 +229,6 @@ export const SelectProductsErrors=(state)=>state.product.error
 
 
 
-export const {resetRecherche}=productSlice.actions
+export const {resetRecherche,initialize}=productSlice.actions
 
 export default productSlice.reducer

@@ -4,14 +4,16 @@ import {signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../model/firebase';
 import * as Yup from 'yup'
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { AuthError, signIn } from '../features/AuthUser/authUser';
 
 
 function Connection() {
 
 const navigate=useNavigate()
+const dispatch=useDispatch()
+const err=useSelector(AuthError)
 
-
-const [err,setError]=useState({isError:false,errMes:''})
 
   const formik=useFormik({
     initialValues:{
@@ -23,14 +25,16 @@ const [err,setError]=useState({isError:false,errMes:''})
         }),
         onSubmit:async value=>{
           const {email,password}=value
-          try {
-             await signInWithEmailAndPassword(auth,email,password)
+          dispatch(signIn(value))
+          navigate("/",{replace:true})
+          // try {
+          //    await signInWithEmailAndPassword(auth,email,password)
             
-            navigate('/')
+          //   navigate('/')
             
-          } catch (error) {
-            setError({isError:true,errMes:error.message})
-          }
+          // } catch (error) {
+          //   setError({isError:true,errMes:error.message})
+          // }
         
         }
       })  
@@ -83,7 +87,7 @@ const [err,setError]=useState({isError:false,errMes:''})
                     </div>
 
                     {
-                   err.isError ?<p className="text-red-500 text-xs italic">{err.errMes}</p>:null
+                   err ?<p className="text-red-500 text-xs italic">{err}</p>:null
                  }
                     <Link 
                        to={'/forgetpassword'}

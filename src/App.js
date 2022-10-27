@@ -5,9 +5,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { Outlet} from 'react-router-dom'
 import Navbar from "./view/Navbar";
 import {  AuthState, login } from "./features/AuthUser/authUser";
-import { fetchProducts, SelectProductsStatus } from "./features/produit/produitSlice";
-import { auth } from "./model/firebase";
+import { fetchProducts, initialize, SelectProductsStatus } from "./features/produit/produitSlice";
+import { auth, db } from "./model/firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { collection, onSnapshot, query,limit } from "firebase/firestore";
+import { checkQntProduct } from "./utils/checkQntProduct";
 
 
 
@@ -31,11 +33,27 @@ function App() {
      return unsbscribe
     },[dispatch])
 
+  // useEffect(() => {
+  //    if (auth.currentUser && Status === "idle") {
+  //      dispatch(fetchProducts())
+  //    }
+  // }, [Status,isAuth,dispatch])
   useEffect(() => {
-     if (auth.currentUser && Status === "idle") {
-       dispatch(fetchProducts())
+     if (auth.currentUser) {
+    const q=query(collection(db,'products'),limit(5))
+
+       const unsbscribe= onSnapshot(q,(snapshot)=>{
+        const list=snapshot.docs.map(document=>{ 
+           return  {id:document.id,...document.data()}
+          })
+            let productQntDawn=checkQntProduct(list)
+            dispatch(initialize({list,productQntDawn}))
+            
+        })
+        return unsbscribe
      }
-  }, [Status,isAuth,dispatch])
+
+  }, [isAuth,dispatch])
 
   return (
     <>

@@ -8,16 +8,14 @@ function Recherch() {
 const dispatch=useDispatch()
 const searchTerm=useRef()
 
-
+// if( condition){
 const Serch=()=>{
-  if(searchTerm.current.value.length === 2 )
-  {
-    dispatch(resetRecherche())
-  }else
-  if(searchTerm.current.value.length >2){
-     dispatch( RecherchProduct(searchTerm.current.value))
-  }
+  
+    if(searchTerm.current.value.length >2){
+   return  dispatch( RecherchProduct(searchTerm.current.value))
+  }dispatch(resetRecherche())
 }
+// }
 
   return (
       <div className='  mx-auto my-2  md:flex w-[80%] justify-around mt-14 '>
