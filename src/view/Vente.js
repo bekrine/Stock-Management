@@ -1,6 +1,6 @@
 import React from 'react'
 import {useDispatch, useSelector} from 'react-redux'
-import { SelectAllProducts ,SelectProductsErrors,venteProducts } from '../features/produit/produitSlice'
+import { SelectAllProducts ,SelectProductsErrors,SelectProductsRechercher,venteProducts } from '../features/produit/produitSlice'
 import { toggelModel,modalState } from '../features/Modal/modalSlice'
 import {useFormik} from 'formik'
 import * as Yup from 'yup'
@@ -8,6 +8,7 @@ import * as Yup from 'yup'
 function Vente() {
    const dispatch=useDispatch()
   const products=useSelector(SelectAllProducts)
+  const productRecherche=useSelector(SelectProductsRechercher)
   const modal=useSelector(modalState)
   const errorState=useSelector(SelectProductsErrors)
   
@@ -17,9 +18,9 @@ function Vente() {
 
   const formik=useFormik({
     initialValues:{
-      referance: prod[0].referance,
-      nomProduct:prod[0].nomProduct ,
-      prix:prod[0].prix ,
+      referance:products[0]?.referance  || productRecherche[0]?.referance ,
+      nomProduct:products[0]?.nomProduct || productRecherche[0]?.nomProduct,
+      prix:products[0]?.prix || productRecherche[0]?.prix ,
       Qnt: "" ,
       
     },validationSchema:Yup.object({
@@ -28,7 +29,7 @@ function Vente() {
     onSubmit:value=>{
       const {Qnt}=value
       let prodVente={
-        QntProd:prod[0].Qnt,
+        QntProd:prod[0]?.Qnt || productRecherche[0]?.Qnt ,
         QntVente:Qnt,
         id:modal.id
       }

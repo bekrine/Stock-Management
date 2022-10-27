@@ -1,22 +1,14 @@
 import React, { useState } from 'react'
-import {Link, useNavigate} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import { auth } from '../model/firebase'
-import { signOut } from 'firebase/auth'
-
+import {AuthState, signUserOut} from '../features/AuthUser/authUser'
+import { useDispatch, useSelector } from 'react-redux'
 function Navbar() {
 
-    const navigate=useNavigate()
+    const dispatch=useDispatch()
+    const currentUser=useSelector(AuthState)
     const [toggle, setToggel] = useState(false)
     
-   const logOut =async()=>{
-        try {
-             await signOut(auth)
-             
-            navigate('/connection')
-        } catch (error) {
-            return error.message
-        }
-    }
 
     return (
         <nav className="p-3 bg-gray-50 rounded border-gray-200 dark:bg-gray-800 dark:border-gray-700">
@@ -45,17 +37,19 @@ function Navbar() {
                        
                         
                     {
-                        auth.currentUser 
-                        &&
+                      
+                        currentUser === ''
+                        
+                        ?
+                        null
+                        :
                         
                         <li className=' flex justify-center border-b-2 md:flex justify-center md:border-0 '>
                                 <button 
-                                onClick={()=>logOut()}
+                                onClick={()=>dispatch(signUserOut())}
                                 className="block py-2 pr-4 pl-3 text-white  rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-white  md:dark:bg-transparent" 
                                 aria-current="page">Deconnection</button>
                             </li>
-                           
-                       
                         }
                         </ul>
                 </div>

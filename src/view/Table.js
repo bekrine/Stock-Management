@@ -27,27 +27,26 @@ function Table() {
     
 
 
-    console.log(productRechrcher)
     useEffect(()=>{
-        if(productsNeedQnt.length > 0){
+        if(productsNeedQnt?.length > 0){
             dispatch(toggelModel({id:null,type:'notification'}))   
         }
-    },[productsNeedQnt.length,dispatch])
+    },[productsNeedQnt?.length,dispatch])
     
     let content
     if(Status === 'loading'){
         return <Loader/>
-    }else if(Status === 'succeeded'){
+    }else if(Status =='rechercheOnProgres'){
         if(productRechrcher?.length === 0){
-                content=<tr><td>Aucun produit Trouve</td></tr>
-        }else
-        if(productRechrcher?.length > 0){
-            content=productRechrcher.map((product) => {
-                return <ProductExcpert product={product} key={product.id} /> } )            
-        }else content=products.map((product) => {
+            content=<tr><td>Aucun produit Trouve</td></tr>
+    }else
+        content=productRechrcher?.map((product) => {
+            return <ProductExcpert product={product} key={product.id} /> } )            
+
+    }else  if(Status === 'succeeded'){
+         content=products?.map((product) => {
             return <ProductExcpert product={product} key={product.id} />  
-        })
-         
+        })  
     }else if(Status === 'failed'){
         return <div>{error}</div>
     }

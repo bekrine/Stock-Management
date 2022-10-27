@@ -1,7 +1,7 @@
 import React from 'react'
 import {useDispatch,useSelector} from 'react-redux'
 import {modalState,toggelModel} from '../features/Modal/modalSlice'
-import {SelectAllProducts, SelectProductsStatus, updateProductField} from '../features/produit/produitSlice'
+import {SelectAllProducts, SelectProductsRechercher, SelectProductsStatus, updateProductField} from '../features/produit/produitSlice'
 import {useFormik} from 'formik'
 import * as Yup from 'yup'
 
@@ -9,17 +9,19 @@ function UpdateProduct() {
   const dispatch=useDispatch()
 
   const modal=useSelector(modalState)
+  const productRecherche=useSelector(SelectProductsRechercher)
   const products=useSelector(SelectAllProducts)
   const Status=useSelector(SelectProductsStatus)
   
   const product=products.filter(prod=>prod.id === modal.id)
 
+
     const formik=useFormik({
       initialValues:{
-        referance:product[0].referance ,
-        nomProduct:product[0].nomProduct,
-        prix:product[0].prix,
-        Qnt:product[0].Qnt
+        referance:product[0]?.referance  || productRecherche[0]?.referance ,
+        nomProduct:product[0]?.nomProduct || productRecherche[0]?.nomProduct,
+        prix:product[0]?.prix || productRecherche[0]?.prix,
+        Qnt:product[0]?.Qnt || productRecherche[0]?.Qnt
 
       },validationSchema:Yup.object({
         referance:Yup.string().required("champs obligatoir remplire le champ s'il vous plait"),
