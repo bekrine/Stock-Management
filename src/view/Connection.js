@@ -1,17 +1,15 @@
-import React, { useState } from 'react'
-import {useFormik} from 'formik'
+import { useFormik} from 'formik'
 import {signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../model/firebase';
 import * as Yup from 'yup'
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { AuthError, signIn } from '../features/AuthUser/authUser';
+import {  useSelector } from 'react-redux';
+import { AuthError } from '../features/AuthUser/authUser';
 
 
 function Connection() {
 
 const navigate=useNavigate()
-const dispatch=useDispatch()
 const err=useSelector(AuthError)
 
 
@@ -24,17 +22,16 @@ const err=useSelector(AuthError)
           password:Yup.string().min(4,'mot de passse doit etre minimum de 4 lettre').required("champs obligatoir remplire le champ s'il vous plait"),
         }),
         onSubmit:async value=>{
+          
           const {email,password}=value
-          dispatch(signIn(value))
-          navigate("/",{replace:true})
-          // try {
-          //    await signInWithEmailAndPassword(auth,email,password)
+          try {
+             await signInWithEmailAndPassword(auth,email,password)
             
-          //   navigate('/')
+            navigate('/',{replace:true})
             
-          // } catch (error) {
-          //   setError({isError:true,errMes:error.message})
-          // }
+          } catch (error) {
+            // setError({isError:true,errMes:error.message})
+          }
         
         }
       })  

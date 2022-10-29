@@ -4,9 +4,7 @@ import {addDoc,
     deleteDoc,
     getDocs,
     doc,
-     setDoc, 
-     onSnapshot, 
-     limit, 
+     setDoc,
      query, 
       orderBy,
        startAt,
@@ -15,7 +13,6 @@ import {addDoc,
         } from 'firebase/firestore'
 import { toast } from 'react-toastify'
 import { db } from '../../model/firebase'
-import { checkQntProduct } from '../../utils/checkQntProduct'
 
 
 
