@@ -1,6 +1,8 @@
 import { createSlice , createAsyncThunk } from "@reduxjs/toolkit";
 import { sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { Navigate, useNavigate } from "react-router-dom";
 import { auth } from "../../model/firebase";
+
 
 
 export const forgetPassword=createAsyncThunk('/forgetPassword',async(email)=>{
@@ -19,7 +21,8 @@ export const signIn=createAsyncThunk('/signIn',async(value)=>{
     const {email,password}=value
         try {
         const userCredential= await signInWithEmailAndPassword(auth,email,password)
-            return userCredential.user.uid
+        return <Navigate to={'/'} replace={true} />
+             
         } catch (error) {
             return error.message
         }
@@ -37,7 +40,7 @@ export const signUserOut=createAsyncThunk('/signOut',async()=>{
 export const AthSlice=createSlice({
     name:'authSlice',
     initialState:{
-        currentUser:'',
+        currentUser:null ||JSON.parse( localStorage.getItem('user')),
         status:"idel",
         error:null
     },
@@ -45,13 +48,9 @@ export const AthSlice=createSlice({
         login(state,action){
             state.currentUser=action.payload
         },
-        logOut:async (state)=>{
-            try {
-                 await signOut()
-            state.currentUser=''
-            } catch (error) {
-                return error.message
-            }
+        logOut(state){
+            state.currentUser=null
+           
         
 
         }
@@ -62,16 +61,16 @@ export const AthSlice=createSlice({
             state.status='loading'
         })
         .addCase(signIn.fulfilled,(state,action)=>{
-            console.log(action.payload)
+           
             state.status='succeeded'
-            state.currentUser=action.payload
+            // state.currentUser=action.payload
         })
         .addCase(signIn.rejected,(state,action)=>{
             state.status='failed'
             state.error=action.payload
         })
         .addCase(signUserOut.fulfilled,(state,action)=>{
-            state.currentUser=''
+            
         })
         .addCase(forgetPassword.fulfilled,(state,action)=>{
             console.log(action)
