@@ -9,7 +9,8 @@ import {addDoc,
       orderBy,
        startAt,
         endAt,
-        updateDoc
+        updateDoc,
+        where
         } from 'firebase/firestore'
 import { toast } from 'react-toastify'
 import { db } from '../../model/firebase'
@@ -25,46 +26,45 @@ const initialState={
 
 }
 
-  export const fetchProducts=createAsyncThunk('/fetchproduct',async()=>{
-//     try {
+//   export const fetchProducts=createAsyncThunk('/fetchproduct',async()=>{
+// //     try {
         
     
-//     const q=query(collection(db,'products'))
+// //     const q=query(collection(db,'products'))
 
-//    let result=[]
-//    onSnapshot(q,(snapshot)=>{
-//       const list=snapshot.docs.map(document=>{ 
-//          return  {id:document.id,...document.data()}
-//         })
-//           let productQntDawn=checkQntProduct(list)
-//           console.log(list)
-//           console.log(productQntDawn)
-//           return {list,productQntDawn}
-//       })
-//       console.log(result)
+// //    let result=[]
+// //    onSnapshot(q,(snapshot)=>{
+// //       const list=snapshot.docs.map(document=>{ 
+// //          return  {id:document.id,...document.data()}
+// //         })
+// //           let productQntDawn=checkQntProduct(list)
+// //           console.log(list)
+// //           console.log(productQntDawn)
+// //           return {list,productQntDawn}
+// //       })
+// //       console.log(result)
       
-//     } catch (error) {
-//         return error.message
-//     }
- })
+// //     } catch (error) {
+// //         return error.message
+// //     }
+//  })
 
 
-// export const fetchProducts=createAsyncThunk('/fetchproduct',async()=>{
+export const fetchProductsQnt=createAsyncThunk('/fetchproductQnt',async()=>{
 
-//     const q=query(collection(db,'products'),limit(5))
-//     try {
-//         let list=[]
-//         const respance= await getDocs(q)
-//         respance.forEach((doc) => {
-//             list.push({id:doc.id,...doc.data()})
-//         });
-//        let productQntDawn=checkQntProduct(list)
-//         return {list,productQntDawn}
+    const q=query(collection(db,'products'),where('Qnt','<=',5))
+    try {
+        let list=[]
+        const respance= await getDocs(q)
+        respance.forEach((doc) => {
+            list.push({id:doc.id,...doc.data()})
+        });
+       return list
         
-//     } catch (error) {
-//         return error.message
-//     }
-// })
+    } catch (error) {
+        return error.message
+    }
+})
 
 export const addNewProduct=createAsyncThunk('/addProduct',async({referance,nomProduct,prix,Qnt})=>{
         try {
@@ -158,8 +158,7 @@ export const productSlice=createSlice({
     initialState,
     reducers:{
         initialize:(state,action)=>{
-            state.productneedQnt=action.payload?.productQntDawn
-            state.prds=action.payload?.list
+            state.prds=action.payload
             state.status='succeeded'
         },
         resetRecherche:(state)=>{
@@ -170,18 +169,18 @@ export const productSlice=createSlice({
     ,
     extraReducers(builder){
         builder
-        .addCase(fetchProducts.pending,(state,action)=>{
-            state.status='loading'
+        // .addCase(fetchProductsQnt.pending,(state,action)=>{
+        //     state.status='loading'
+        // })
+        .addCase(fetchProductsQnt.fulfilled,(state,action)=>{
+            state.productneedQnt=action.payload
+            // state.status='secceeded'
         })
-        .addCase(fetchProducts.fulfilled,(state,action)=>{
-            state.status='succeeded'
-            state.productneedQnt=action.payload?.productQntDawn
-            state.prds=action.payload?.list
-        })
-        .addCase(fetchProducts.rejected,(state,action)=>{
-            state.status='failed'
-            state.error=action.error.message
-        })
+        // .addCase(fetchProductsQnt.rejected,(state,action)=>{
+        //     state.status='failed'
+        //     state.error=action.error.message
+        // })
+        
         .addCase(addNewProduct.pending,(state,action)=>{
             state.status='addOnProgrese'
         

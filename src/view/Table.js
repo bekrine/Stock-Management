@@ -26,17 +26,18 @@ function Table() {
     const productRechrcher = useSelector(SelectProductsRechercher)
     
 
-
+        console.log(productsNeedQnt)
     useEffect(()=>{
         if(productsNeedQnt?.length > 0){
             dispatch(toggelModel({id:null,type:'notification'}))   
         }
     },[productsNeedQnt?.length,dispatch])
     
+    console.log(Status)
     let content
     if(Status === 'loading'){
         return <Loader/>
-    }else if(Status =='rechercheOnProgres'){
+    }else if(Status ==='rechercheOnProgres'){
         if(productRechrcher?.length === 0){
             content=<tr><td>Aucun produit Trouve</td></tr>
     }else
