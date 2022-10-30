@@ -5,11 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { Outlet} from 'react-router-dom'
 import Navbar from "./view/Navbar";
 import {  AuthState, login, logOut } from "./features/AuthUser/authUser";
-import {  initialize, SelectProductsStatus } from "./features/produit/produitSlice";
+import {  fetchProductsQnt, initialize, SelectProductsStatus } from "./features/produit/produitSlice";
 import { auth, db } from "./model/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { collection, onSnapshot, query,limit } from "firebase/firestore";
-import { checkQntProduct } from "./utils/checkQntProduct";
 
 function App() {
 
@@ -33,14 +32,14 @@ function App() {
      if (Status === "idle") {
     const q=query(collection(db,'products'),limit(5))
 
-       const unsbscribe= onSnapshot(q,(snapshot)=>{
-        const list=snapshot.docs.map(document=>{ 
-           return  {id:document.id,...document.data()}
-          })
-            let productQntDawn=checkQntProduct(list)
-            dispatch(initialize({list,productQntDawn}))
-            
-        })
+    const unsbscribe= onSnapshot(q,(snapshot)=>{
+      const list=snapshot.docs.map(document=>{ 
+        return  {id:document.id,...document.data()}
+      })
+      
+      dispatch(initialize(list))
+    })
+    dispatch(fetchProductsQnt())
         return unsbscribe
      }
 
